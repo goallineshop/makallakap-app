@@ -30,8 +30,7 @@ Build a complete, modern, fast, scalable Turkish-language mobile app based on th
 - Settings: theme, accent color, font size, font family, notification settings, language (TR).
 - Offline-first; scalable to 10,000+.
 
-## Implemented (2026-06-12)
-- Data import: 3513 found / **3512 imported** / 1 duplicate / 0 unreadable / 0 incomplete (see /app/DATA_IMPORT_REPORT.md). All searchable.
+## Implemented (2026-06-12)- Data import: 3513 found / **3512 imported** / 1 duplicate / 0 unreadable / 0 incomplete (see /app/DATA_IMPORT_REPORT.md). All searchable.
 - Home with Günün Atasözü hero, stat pills, quick actions, quiz banner, Öne Çıkan, Kategoriler, Son Görüntülenenler, Favoriler summary.
 - Atasözleri: fast search (full/partial/word/meaning), A-Z LetterRail jump, virtualized FlatList.
 - Kategoriler: 22-category grid with real counts (heuristically derived, since source has no categories) → category list.
@@ -42,6 +41,12 @@ Build a complete, modern, fast, scalable Turkish-language mobile app based on th
 - Settings: light/dark/system, 4 accent colors, 4 font sizes, serif/sans, notification toggle + time, Turkish language info — all persisted.
 - Light/Dark themes, warm/traditional palette, Cormorant+Jakarta fonts, haptics, toasts.
 - E2E tested (iteration_1.json): all flows PASS, no bugs.
+
+## Iteration 2 (2026-06-12)
+- **Quiz Zorluk + Süreli Mod**: Kolay/Orta/Zor difficulty (harder = more confusing distractors sharing first letter/similar length) + timed mode with per-question countdown, time bar, time-up handling, and points scoring (difficulty multiplier + time bonus). Results show %/correct/wrong/points.
+- **Kelime Kartları (Flashcards)**: swipeable/paged flip cards (front proverb → back meaning+explanation) with Rastgele (30 random) or Favoriler deck, shuffle, prev/next, and per-card favorite toggle. Entry from Quiz hub.
+- **Günlük Hatırlatma (Local Notifications)**: expo-notifications local daily scheduling at the user's chosen time with today's proverb; permission-aware Settings toggle; re-applied on launch; graceful no-op + info toast on web/Expo Go (fires only in a real build). No push server/keys.
+- E2E tested (iteration_2.json): all 3 features PASS incl. timeout path + persistence; no bugs.
 
 ## Backlog (prioritized)
 - P1: Sesli Oku validation on real device (Kyrgyz phonetics limited by tr-TR voice); real local notifications (native build); home-screen widget (native build).

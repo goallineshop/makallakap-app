@@ -75,6 +75,7 @@ export function UserDataProvider({ children }: { children: React.ReactNode }) {
       setRecent(rec || []);
       setQuizStats(quiz || DEFAULT_QUIZ);
       setNotifState(nt || DEFAULT_NOTIF);
+      if ((nt || DEFAULT_NOTIF).enabled) applySchedule(nt || DEFAULT_NOTIF);
 
       // Daily streak update on app open.
       const today = dayKey();

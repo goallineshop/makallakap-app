@@ -1,7 +1,7 @@
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -9,33 +9,77 @@ import { PrimaryButton } from "@/src/components/Buttons";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useUserData } from "@/src/context/UserDataContext";
 import { TR } from "@/src/i18n/tr";
-import { generateQuiz, QuizMode, QuizQuestion } from "@/src/services/quiz";
+import {
+  Difficulty,
+  DIFFICULTY_MULTIPLIER,
+  generateQuiz,
+  QuizMode,
+  QuizQuestion,
+  TIME_LIMITS,
+} from "@/src/services/quiz";
 
 export default function QuizPlayScreen() {
-  const { mode } = useLocalSearchParams<{ mode: QuizMode }>();
-  const quizMode = (mode as QuizMode) || "complete";
+  const params = useLocalSearchParams<{ mode: QuizMode; difficulty: Difficulty; timed: string }>();
+  const quizMode = (params.mode as QuizMode) || "complete";
+  const difficulty = (params.difficulty as Difficulty) || "medium";
+  const timed = params.timed === "1";
+  const timeLimit = TIME_LIMITS[difficulty];
+  const multiplier = DIFFICULTY_MULTIPLIER[difficulty];
+
   const { colors, fonts, spacing, proverbFont, type } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { recordQuizResult } = useUserData();
 
-  const [questions, setQuestions] = useState<QuizQuestion[]>(() => generateQuiz(quizMode));
+  const [questions, setQuestions] = useState<QuizQuestion[]>(() => generateQuiz(quizMode, difficulty));
   const [index, setIndex] = useState(0);
-  const [selected, setSelected] = useState<number | null>(null);
+  const [selected, setSelected] = useState<number | null>(null); // -1 == timed out
   const [correct, setCorrect] = useState(0);
   const [wrong, setWrong] = useState(0);
+  const [points, setPoints] = useState(0);
   const [finished, setFinished] = useState(false);
   const [recorded, setRecorded] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(timeLimit);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const total = questions.length;
   const q = questions[index];
 
+  // Reset the countdown whenever the question changes.
+  useEffect(() => {
+    setTimeLeft(timeLimit);
+  }, [index, timeLimit]);
+
+  // Countdown ticker (timed mode only, before an answer is given).
+  useEffect(() => {
+    if (!timed || finished || selected !== null) {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      return;
+    }
+    intervalRef.current = setInterval(() => {
+      setTimeLeft((t) => (t > 0 ? t - 1 : 0));
+    }, 1000);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [timed, finished, selected, index]);
+
+  // Handle timeout.
+  useEffect(() => {
+    if (timed && timeLeft <= 0 && selected === null && !finished) {
+      setSelected(-1);
+      setWrong((w) => w + 1);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    }
+  }, [timeLeft, timed, selected, finished]);
+
   const onSelect = (i: number) => {
     if (selected !== null) return;
     setSelected(i);
-    const isCorrect = i === q.answerIndex;
-    if (isCorrect) {
+    if (i === q.answerIndex) {
       setCorrect((c) => c + 1);
+      const timeBonus = timed ? Math.round((timeLeft / timeLimit) * 5) : 0;
+      setPoints((p) => p + (10 + timeBonus) * multiplier);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } else {
       setWrong((w) => w + 1);
@@ -58,13 +102,15 @@ export default function QuizPlayScreen() {
   };
 
   const restart = () => {
-    setQuestions(generateQuiz(quizMode));
+    setQuestions(generateQuiz(quizMode, difficulty));
     setFinished(false);
     setRecorded(false);
     setIndex(0);
     setSelected(null);
     setCorrect(0);
     setWrong(0);
+    setPoints(0);
+    setTimeLeft(timeLimit);
   };
 
   // Results screen
@@ -101,9 +147,11 @@ export default function QuizPlayScreen() {
             </View>
             <View style={[styles.resultStat, { backgroundColor: colors.surfaceSecondary }]}>
               <Feather name="award" size={22} color={colors.brandSecondary} />
-              <Text style={[styles.resultValue, { color: colors.onSurface, fontFamily: fonts.sansBold }]}>{correct * 10}</Text>
+              <Text style={[styles.resultValue, { color: colors.onSurface, fontFamily: fonts.sansBold }]}>
+                {Math.round(points)}
+              </Text>
               <Text style={[styles.resultLabel, { color: colors.onSurfaceSecondary, fontFamily: fonts.sans }]}>
-                {TR.quiz.yourScore}
+                {TR.quiz.points}
               </Text>
             </View>
           </View>
@@ -124,6 +172,8 @@ export default function QuizPlayScreen() {
   }
 
   const progress = (index + (selected !== null ? 1 : 0)) / total;
+  const timeFrac = timeLimit > 0 ? timeLeft / timeLimit : 0;
+  const timeColor = timeLeft <= 3 ? colors.error : colors.brandSecondary;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.surface }]}>
@@ -140,7 +190,14 @@ export default function QuizPlayScreen() {
         <Text style={[styles.progressLabel, { color: colors.onSurfaceSecondary, fontFamily: fonts.sansSemi }]}>
           {TR.quiz.question(index + 1, total)}
         </Text>
-        <View style={{ width: 42 }} />
+        {timed ? (
+          <View testID="quiz-timer" style={[styles.timerPill, { backgroundColor: colors.surfaceSecondary }]}>
+            <Feather name="clock" size={13} color={timeColor} />
+            <Text style={[styles.timerText, { color: timeColor, fontFamily: fonts.sansBold }]}>{timeLeft}</Text>
+          </View>
+        ) : (
+          <View style={{ width: 42 }} />
+        )}
       </View>
 
       {/* Progress bar */}
@@ -148,12 +205,19 @@ export default function QuizPlayScreen() {
         <View style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: colors.brandPrimary }]} />
       </View>
 
+      {/* Time bar */}
+      {timed && (
+        <View style={[styles.timeTrack, { backgroundColor: colors.surfaceTertiary }]}>
+          <View style={[styles.timeFill, { width: `${timeFrac * 100}%`, backgroundColor: timeColor }]} />
+        </View>
+      )}
+
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ padding: spacing.lg, paddingBottom: 140 }}
       >
         <Text style={[styles.modeTag, { color: colors.brandPrimary, fontFamily: fonts.sansBold }]}>
-          {TR.quiz.modes[quizMode].title}
+          {TR.quiz.modes[quizMode].title} • {difficulty === "easy" ? TR.quiz.easy : difficulty === "hard" ? TR.quiz.hard : TR.quiz.medium}
         </Text>
         <View style={[styles.questionCard, { backgroundColor: colors.surfaceSecondary, borderColor: colors.border }]}>
           <Text style={[styles.question, { color: colors.onSurface, fontFamily: proverbFont, fontSize: type(24) }]}>
@@ -224,7 +288,7 @@ export default function QuizPlayScreen() {
           >
             {selected === q.answerIndex
               ? TR.quiz.correct
-              : `${TR.quiz.wrong} • ${TR.quiz.correctAnswer}: ${q.options[q.answerIndex]}`}
+              : `${selected === -1 ? TR.quiz.timeUp : TR.quiz.wrong} • ${TR.quiz.correctAnswer}: ${q.options[q.answerIndex]}`}
           </Text>
           <PrimaryButton
             testID="quiz-next"
@@ -250,9 +314,22 @@ const styles = StyleSheet.create({
   },
   closeBtn: { width: 42, height: 42, borderRadius: 21, alignItems: "center", justifyContent: "center" },
   progressLabel: { fontSize: 14 },
+  timerPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    minWidth: 42,
+    justifyContent: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+  },
+  timerText: { fontSize: 14 },
   progressTrack: { height: 6, marginHorizontal: 16, borderRadius: 3, overflow: "hidden" },
   progressFill: { height: 6, borderRadius: 3 },
-  modeTag: { fontSize: 12, letterSpacing: 0.6, textTransform: "uppercase", marginBottom: 10 },
+  timeTrack: { height: 4, marginHorizontal: 16, borderRadius: 2, overflow: "hidden", marginTop: 6 },
+  timeFill: { height: 4, borderRadius: 2 },
+  modeTag: { fontSize: 12, letterSpacing: 0.6, textTransform: "uppercase", marginBottom: 10, marginTop: 6 },
   questionCard: { borderRadius: 20, borderWidth: 1, padding: 22, minHeight: 120, justifyContent: "center" },
   question: { lineHeight: 34, textAlign: "center" },
   option: {

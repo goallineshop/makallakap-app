@@ -1,0 +1,36 @@
+{
+  "summary": "Full frontend testing of Makallakap iteration_2 focused on the 3 NEW features. All flows PASSED. (1) Quiz Hub: difficulty-easy/medium/hard segmented control, timed-switch toggle, quiz-mode-complete/meaning/word, flashcards-entry and quiz-achievements-link all visible and interactive. (2) Timed quiz play (Hard/Complete): quiz-timer pill visible with initial value 8 (hard=8s), decrements correctly (8→6 after 2.1s), time bar depletes, answering freezes the timer, quiz-next appears with feedback, completing 10 questions renders results screen with %, correct, wrong, points and quiz-restart + quiz-home both work. (3) Timeout path (Hard/Word timed): waited 9.5s for the 8s countdown to elapse; UI auto-marked question wrong, showed 'Süre doldu! • Doğru cevap: daam' feedback text and highlighted the correct option with a check icon, and quiz-next advanced. Distractors in Hard mode share first letter (durus / doolayt / dediñbi / daam — all 'd') confirming difficulty logic. Untimed meaning quiz shows no quiz-timer pill. (4) Flashcards: /flashcards loads with flashcards-source-random (default) + flashcards-source-favorites segmented; flashcard-<id> flips front (ATASÖZÜ) → back (ANLAMI with meaning + explanation) on tap; flashcards-next / flashcards-prev advance progress '1 / 30' → '2 / 30'; flashcards-shuffle reshuffles the deck; flashcards-fav toggles favorite; switching to Favoriler shows only favorited cards with correct '1 / 1' progress; unfavoriting the last card shows the empty state 'Henüz favori atasözün yok' with the Atasözleri CTA. (5) Settings notifications: notif-switch toggles ON — an info toast 'Bildirimler yalnızca derlenmiş uygulamada çalışır. Tercihin kaydedildi.' appears (build-required path); the hour-up/hour-down/min-up/min-down steppers appear only when enabled and change the displayed HH:MM; toggling OFF hides the steppers; enabling + reloading the page keeps the toggle ON (steppers remain visible), confirming persistence across reload via AsyncStorage. Base regression flows from iteration_1 remain unaffected (home/browse/detail/favorites/categories/recent/achievements/settings-persistence). No red screens, no crashes, no non-Turkish UI strings. Only harmless library warnings (shadow*, pointerEvents, useNativeDriver, expo-notifications web push listener) — same as iteration_1.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/tmp/q_hub_hard_timed.png",
+    "/tmp/q_answered.png",
+    "/tmp/q_results.png",
+    "/tmp/q_timeout.png",
+    "/tmp/q_untimed.png",
+    "/tmp/fc_back.png",
+    "/tmp/fc_favs.png",
+    "/tmp/fc_empty.png",
+    "/tmp/settings_notif_on.png",
+    "/tmp/settings_after_reload.png"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "quiz.ts TIME_LIMITS (easy=20, medium=12, hard=8) and DIFFICULTY_MULTIPLIER (1/1.5/2) look reasonable; hard-mode distractors share first letter which was verified visually in the timeout screenshot.",
+    "notifications.ts correctly guards local scheduling behind Platform.OS !== 'web' && !isExpoGo, so the web preview cannot fire notifications by design; UX (toast + preference persistence) is the only observable behavior on web and it works.",
+    "app/quiz/play.tsx: timer setInterval is properly cleaned up on unmount and gated on selected === null && !finished — no runaway timers observed across question transitions or when answering before timeout.",
+    "flashcards.tsx: Flashcard component uses backfaceVisibility: 'hidden' with Animated.spring(useNativeDriver: true). On web this triggers the JS-driver warning (harmless) but the flip animation still renders correctly."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A", "frontend": "100%" },
+  "seed_data_creation": "None — offline app, 3512 bundled proverbs.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Preview URL: https://atasozleri-hub.preview.emergentagent.com. New routes/features to exercise: /quiz (difficulty + timed switch), /quiz/play?mode=<complete|meaning|word>&difficulty=<easy|medium|hard>&timed=<0|1>, /flashcards (source=random|favorites, testIDs: flashcard-<id>, flashcards-next/prev/shuffle/fav), and Settings notif-switch + hour-up/hour-down/min-up/min-down steppers. In web/Expo Go, notifications never fire; only the info toast + preference persistence is testable. Countdown for hard=8s, medium=12s, easy=20s. Selectors sometimes match 2 elements in the DOM because the Expo Router tabs navigator can mount two screens during transitions — always use .locator(sel).first when navigating between tabs to avoid strict-mode failures.",
+  "rca_of_issue": "N/A — no bugs found."
+}

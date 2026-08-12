@@ -5,12 +5,13 @@ import React from "react";
 import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
 
 import { ScreenHeader } from "@/src/components/ScreenHeader";
+import { useToast } from "@/src/components/Toast";
 import { ThemeMode, useTheme, FontChoice } from "@/src/context/ThemeContext";
 import { useUserData } from "@/src/context/UserDataContext";
 import { ACCENTS, AccentKey, FONT_SCALE_LABELS } from "@/src/theme/tokens";
 import { TR } from "@/src/i18n/tr";
 import { PROVERB_COUNT } from "@/src/services/proverbs";
-import { formatTime } from "@/src/services/notifications";
+import { formatTime, requestNotificationPermission } from "@/src/services/notifications";
 
 function SettingsGroup({ title, children }: { title: string; children: React.ReactNode }) {
   const { colors, fonts } = useTheme();
@@ -81,6 +82,25 @@ export default function SettingsScreen() {
     proverbFont,
   } = useTheme();
   const { notif, setNotif } = useUserData();
+  const toast = useToast();
+
+  const onToggleNotif = async (v: boolean) => {
+    if (!v) {
+      setNotif({ enabled: false });
+      toast.show(TR.settings.notifDisabled, { icon: "bell-off", type: "info" });
+      return;
+    }
+    const res = await requestNotificationPermission();
+    if (res === "granted") {
+      setNotif({ enabled: true });
+      toast.show(TR.settings.notifEnabled, { icon: "bell", type: "success" });
+    } else if (res === "unavailable") {
+      setNotif({ enabled: true });
+      toast.show(TR.settings.notifNeedsBuild, { icon: "info", type: "info" });
+    } else {
+      toast.show(TR.settings.notifPermDenied, { icon: "bell-off", type: "error" });
+    }
+  };
 
   const stepMinute = (delta: number) => {
     let m = notif.minute + delta;
@@ -190,7 +210,7 @@ export default function SettingsScreen() {
             <Switch
               testID="notif-switch"
               value={notif.enabled}
-              onValueChange={(v) => setNotif({ enabled: v })}
+              onValueChange={onToggleNotif}
               trackColor={{ false: colors.surfaceTertiary, true: colors.brandPrimary }}
               thumbColor="#fff"
             />

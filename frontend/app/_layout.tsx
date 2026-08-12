@@ -44,6 +44,7 @@ function ThemedStack() {
       <Stack.Screen name="settings" />
       <Stack.Screen name="recent" />
       <Stack.Screen name="achievements" />
+      <Stack.Screen name="flashcards" />
     </Stack>
   );
 }
