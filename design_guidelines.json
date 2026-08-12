@@ -1,0 +1,198 @@
+{
+  "app_name": "Makallakap",
+  "personality": "3 Editorial Mobile (Editorial structure fused with warm, traditional cultural earthy/burgundy tones)",
+  "personality_one_liner": "A culturally rich, editorial-led reference experience that feels like a beautifully bound traditional manuscript.",
+  "color": {
+    "surface": "#FDFBF7",
+    "onSurface": "#2C2421",
+    "surfaceSecondary": "#F4EFE6",
+    "onSurfaceSecondary": "#4A3C35",
+    "surfaceTertiary": "#E8DEC8",
+    "onSurfaceTertiary": "#59473D",
+    "surfaceInverse": "#2C2421",
+    "onSurfaceInverse": "#FDFBF7",
+    "brand": "#8C2128",
+    "brandPrimary": "#8C2128",
+    "onBrandPrimary": "#FFFFFF",
+    "brandSecondary": "#D4AF37",
+    "onBrandSecondary": "#1A1412",
+    "brandTertiary": "#E6D3C8",
+    "onBrandTertiary": "#5C1217",
+    "success": "#2D5A4C",
+    "onSuccess": "#FFFFFF",
+    "warning": "#B8711E",
+    "onWarning": "#FFFFFF",
+    "error": "#962D2D",
+    "onError": "#FFFFFF",
+    "info": "#4A6B8C",
+    "onInfo": "#FFFFFF",
+    "border": "#E8DEC8",
+    "borderStrong": "#C5A059",
+    "divider": "#E8DEC8"
+  },
+  "color_dark": {
+    "surface": "#1A1412",
+    "onSurface": "#EBE5DF",
+    "surfaceSecondary": "#2A1C1A",
+    "onSurfaceSecondary": "#D1C7C0",
+    "surfaceTertiary": "#3D2724",
+    "onSurfaceTertiary": "#E0D4CD",
+    "surfaceInverse": "#EBE5DF",
+    "onSurfaceInverse": "#1A1412",
+    "brand": "#8C2128",
+    "brandPrimary": "#B23B44",
+    "onBrandPrimary": "#FFFFFF",
+    "brandSecondary": "#E0BE55",
+    "onBrandSecondary": "#1A1412",
+    "brandTertiary": "#5C1D21",
+    "onBrandTertiary": "#F5D6D8",
+    "success": "#3C7A67",
+    "onSuccess": "#FFFFFF",
+    "warning": "#D68D31",
+    "onWarning": "#1A1412",
+    "error": "#B83D3D",
+    "onError": "#FFFFFF",
+    "info": "#668BAF",
+    "onInfo": "#FFFFFF",
+    "border": "#3D2724",
+    "borderStrong": "#8C7142",
+    "divider": "#3D2724"
+  },
+  "typography": {
+    "displayFontFamily": "Cormorant Garamond",
+    "textFontFamily": "Plus Jakarta Sans",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Generous magazine-like vertical rhythms. Let typography and whitespace breathe to emphasize the cultural proverbs.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 6,
+    "md": 12,
+    "lg": 20,
+    "pill": 999
+  },
+  "shadow_tier": 0,
+  "navigation": "bottom_tabs",
+  "icon_set": "Feather",
+  "glassmorphism": {
+    "enabled": false,
+    "do's": ["Skip glass to maintain the matte, traditional paper/manuscript feel"],
+    "dont's": ["Do not use blur or glassmorphism anywhere in this editorial setup"]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-glass-effect",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Ana Sayfa (Home)",
+      "purpose": "A welcoming dashboard combining daily inspiration and quick access to gamified features.",
+      "states": {
+        "loading": "Centered minimalist spinner in brandPrimary color.",
+        "empty": "N/A - Home is structural.",
+        "error": "Error reading local database, with a 'Tekrar Dene' button."
+      },
+      "layout": "Header with 'Makallakap' logo (serif) and settings cog. A large 'Günün Atasözü' hero card using the burgundy/gold abstract texture as background, text overlaid with a vertical dark scrim (transparent -> 80% surfaceInverse at bottom) for contrast, the proverb in large Cormorant Garamond. Below it, quick actions for 'Rastgele Atasözü', 'Son Görüntülenenler' horizontal scroll, and a banner for 'Quiz'e Başla' showcasing the current daily streak."
+    },
+    {
+      "name": "Atasözleri (Browse)",
+      "purpose": "Efficiently navigate and search the ~3500 proverbs.",
+      "states": {
+        "loading": "Skeleton list rows mimicking text widths.",
+        "empty": "Illustration of an open vintage book with text 'Sonuç bulunamadı' and clear search button.",
+        "error": "Retry fetching data."
+      },
+      "layout": "Sticky search bar at the top with filter icon. Alphabetical quick-jump rail (A-Z) fixed on the right edge. List items display the proverb (serif) and a 1-line snippet of meaning (sans). Separated by subtle dividers (1px border). Scroll performance prioritized."
+    },
+    {
+      "name": "Kategoriler",
+      "purpose": "Browse proverbs by themes or contexts.",
+      "states": {
+        "loading": "Skeleton grid cards.",
+        "empty": "Illustration of an open book.",
+        "error": "Retry fetching."
+      },
+      "layout": "A 2-column grid. Each category card has a brandTertiary tinted background with an earthy Feather icon, a title in serif, and a count badge. Cards fill the row utilizing space-between."
+    },
+    {
+      "name": "Atasözü Detay (Detail)",
+      "purpose": "Deep dive into the meaning, story, and usage of a specific proverb.",
+      "states": {
+        "loading": "Centered spinner.",
+        "empty": "Not found message.",
+        "error": "Retry."
+      },
+      "layout": "Editorial full-width layout. Huge serif proverb text at the top, a subtle gold divider, then structured sections: 'Anlamı', 'Açıklaması', 'Hikâyesi', 'Kullanım Örneği'. Bottom bar fixed (sticky outside scroll area) containing secondary actions: 'Sesli Oku (TTS)', 'Paylaş', and 'Favoriye Ekle' (heart icon turning brandPrimary when active)."
+    },
+    {
+      "name": "Quiz",
+      "purpose": "Gamified learning of proverbs.",
+      "states": {
+        "loading": "Spinner.",
+        "empty": "No quizzes available.",
+        "error": "Retry."
+      },
+      "layout": "Distraction-free card layout. Top progress bar. The question in large serif text. Options presented as stacked surfaceSecondary cards. Selecting an option briefly highlights it success/error color, popping a subtle haptic, then advances."
+    },
+    {
+      "name": "Favoriler & Ayarlar",
+      "purpose": "Manage saved items and user preferences.",
+      "states": {
+        "loading": "Spinner.",
+        "empty": "Vintage book illustration with 'Henüz favorilere eklenmiş atasözü yok.'",
+        "error": "Retry."
+      },
+      "layout": "Favoriler: Simple list view identical to Atasözleri but without the A-Z rail. Ayarlar: Grouped list sections for 'Tema' (Açık/Koyu/Sistem), 'Yazı Boyutu', etc., with right-aligned values or toggles."
+    }
+  ],
+  "images": {
+    "hero_background_abstract": {
+      "url": "https://images.unsplash.com/photo-1642978347542-c6f9db1fe1a6?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjd8MHwxfHNlYXJjaHwxfHxidXJndW5keSUyMHJlZCUyMGFuZCUyMGdvbGQlMjBhYnN0cmFjdCUyMHRleHR1cmUlMjBiYWNrZ3JvdW5kfGVufDB8fHx8MTc4NjU1OTM0NXww&ixlib=rb-4.1.0&q=85",
+      "dark": "https://images.unsplash.com/photo-1639434036975-a17f4bc4bd36?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjd8MHwxfHNlYXJjaHwyfHxidXJndW5keSUyMHJlZCUyMGFuZCUyMGdvbGQlMjBhYnN0cmFjdCUyMHRleHR1cmUlMjBiYWNrZ3JvdW5kfGVufDB8fHx8MTc4NjU1OTM0NXww&ixlib=rb-4.1.0&q=85",
+      "alt": "Burgundy and gold abstract texture for Günün Atasözü hero card"
+    },
+    "empty_state_book": {
+      "url": "https://images.unsplash.com/photo-1521999888901-8ae925873659?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODF8MHwxfHNlYXJjaHwyfHxvcGVuJTIwdmludGFnZSUyMGJvb2slMjBmbGF0JTIwbGF5JTIwb24lMjB3b29kZW4lMjB0YWJsZXxlbnwwfHx8fDE3ODY1NTkzNDV8MA&ixlib=rb-4.1.0&q=85",
+      "dark": "https://images.unsplash.com/photo-1502051400-dad986bddd4f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODF8MHwxfHNlYXJjaHwyfHxvcGVuJTIwdmludGFnZSUyMGJvb2slMjBmbGF0JTIwbGF5JTIwb24lMjB3b29kZW4lMjB0YWJsZXxlbnwwfHx8fDE3ODY1NTkzNDV8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "Vintage open book representing empty states for favorites or search"
+    }
+  },
+  "haptics": {
+    "button_press": "light",
+    "quiz_correct": "success",
+    "quiz_wrong": "error",
+    "tab_change": "selection",
+    "favorite_toggle": "medium"
+  },
+  "instructions_to_main_agent": [
+    "Build the UI focusing heavily on typography. Use 'Cormorant Garamond' (serif) for proverbs and prominent titles to give the traditional, editorial feel. Use 'Plus Jakarta Sans' (sans-serif) for body text, explanations, and UI controls for readability.",
+    "Implement a warm color scheme. The Light theme uses creamy parchment colors (surface: #FDFBF7) and the Dark theme uses deep, warm charcoal (surface: #1A1412). Avoid ANY blue, indigo, or purple. Stick entirely to the burgundy/gold/earth tokens provided.",
+    "For the 'Günün Atasözü' hero card on the Home screen, overlay the proverb text on the 'hero_background_abstract' image. MUST apply a vertical gradient scrim (Layer 1) from transparent to 80% surfaceInverse at the bottom to guarantee text readability.",
+    "Do NOT use glassmorphism/blur anywhere in this app. The editorial personality relies on matte, solid colors (paper-like aesthetics).",
+    "Ensure Turkish character support (ç, ğ, ı, ö, ş, ü) is perfect, especially for the A-Z alphabetical scroll rail in the Browse page.",
+    "For Quiz interactions, add haptic feedback (success/error) when the user taps an option.",
+    "Keep empty states visual by utilizing the provided 'empty_state_book' image with a primary call to action."
+  ]
+}
