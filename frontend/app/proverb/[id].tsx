@@ -12,7 +12,7 @@ import { useToast } from "@/src/components/Toast";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useUserData } from "@/src/context/UserDataContext";
 import { CATEGORY_MAP } from "@/src/data/categories";
-import { TR } from "@/src/i18n/tr";
+import { useI18n } from "@/src/context/LanguageContext";
 import { byCategory, getById, Proverb } from "@/src/services/proverbs";
 
 export default function ProverbDetailScreen() {
@@ -22,6 +22,7 @@ export default function ProverbDetailScreen() {
   const router = useRouter();
   const toast = useToast();
   const { isFavorite, toggleFavorite, addRecent } = useUserData();
+  const { t, catLabel } = useI18n();
 
   const proverb = id ? getById(id) : undefined;
   const fav = proverb ? isFavorite(proverb.id) : false;
@@ -47,7 +48,7 @@ export default function ProverbDetailScreen() {
   if (!proverb) {
     return (
       <View style={[styles.container, { backgroundColor: colors.surface, paddingTop: insets.top }]}>
-        <EmptyState title={TR.detail.notFound} actionLabel={TR.common.back} onAction={() => router.back()} />
+        <EmptyState title={t.detail.notFound} actionLabel={t.common.back} onAction={() => router.back()} />
       </View>
     );
   }
@@ -68,7 +69,7 @@ export default function ProverbDetailScreen() {
       onStopped: () => setSpeaking(false),
       onError: () => {
         setSpeaking(false);
-        toast.show(TR.common.ttsUnavailable, { icon: "volume-x", type: "error" });
+        toast.show(t.common.ttsUnavailable, { icon: "volume-x", type: "error" });
       },
     });
   };
@@ -76,8 +77,8 @@ export default function ProverbDetailScreen() {
   const handleShare = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const parts = [proverb.proverb];
-    if (proverb.meaning) parts.push(`\n${TR.detail.meaning}: ${proverb.meaning}`);
-    parts.push(`\n— ${TR.appName}`);
+    if (proverb.meaning) parts.push(`\n${t.detail.meaning}: ${proverb.meaning}`);
+    parts.push(`\n— ${t.appName}`);
     try {
       await Share.share({ message: parts.join("\n") });
     } catch {
@@ -88,7 +89,7 @@ export default function ProverbDetailScreen() {
   const handleFav = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     const now = toggleFavorite(proverb.id);
-    toast.show(now ? TR.common.addedFav : TR.common.removedFav, {
+    toast.show(now ? t.common.addedFav : t.common.removedFav, {
       icon: now ? "heart" : "x",
       type: now ? "success" : "info",
     });
@@ -134,7 +135,7 @@ export default function ProverbDetailScreen() {
                   style={[styles.chip, { backgroundColor: colors.brandTertiary }]}
                 >
                   <Text style={[styles.chipText, { color: colors.onBrandTertiary, fontFamily: fonts.sansSemi }]}>
-                    {meta.label}
+                    {catLabel(key)}
                   </Text>
                 </Pressable>
               );
@@ -154,17 +155,17 @@ export default function ProverbDetailScreen() {
 
         {/* Meaning */}
         {proverb.meaning ? (
-          <Section label={TR.detail.meaning} text={proverb.meaning} />
+          <Section label={t.detail.meaning} text={proverb.meaning} />
         ) : null}
 
         {/* Explanation */}
         {proverb.explanation ? (
-          <Section label={TR.detail.explanation} text={proverb.explanation} />
+          <Section label={t.detail.explanation} text={proverb.explanation} />
         ) : null}
 
         {!proverb.meaning && !proverb.explanation ? (
           <Text style={[styles.noExtra, { color: colors.onSurfaceTertiary, fontFamily: fonts.sans }]}>
-            {TR.detail.noExtra}
+            {t.detail.noExtra}
           </Text>
         ) : null}
 
@@ -172,7 +173,7 @@ export default function ProverbDetailScreen() {
         {related.length > 0 && (
           <View style={{ marginTop: 28 }}>
             <Text style={[styles.relatedTitle, { color: colors.onSurface, fontFamily: fonts.serifBold }]}>
-              İlgili Atasözleri
+              {t.detail.related}
             </Text>
             <ScrollView
               horizontal
@@ -201,15 +202,15 @@ export default function ProverbDetailScreen() {
         <ActionButton
           testID="detail-tts-button"
           icon={speaking ? "square" : "volume-2"}
-          label={speaking ? TR.detail.stop : TR.detail.speak}
+          label={speaking ? t.detail.stop : t.detail.speak}
           onPress={handleSpeak}
           active={speaking}
         />
-        <ActionButton testID="detail-share-button" icon="share-2" label={TR.detail.share} onPress={handleShare} />
+        <ActionButton testID="detail-share-button" icon="share-2" label={t.detail.share} onPress={handleShare} />
         <ActionButton
           testID="detail-fav-button"
           icon="heart"
-          label={fav ? TR.detail.removeFav : TR.detail.addFav}
+          label={fav ? t.detail.removeFav : t.detail.addFav}
           onPress={handleFav}
           active={fav}
           filled={fav}

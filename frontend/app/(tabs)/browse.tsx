@@ -15,7 +15,7 @@ import { EmptyState } from "@/src/components/EmptyState";
 import { LetterRail } from "@/src/components/LetterRail";
 import { ProverbListItem } from "@/src/components/ProverbListItem";
 import { useTheme } from "@/src/context/ThemeContext";
-import { TR } from "@/src/i18n/tr";
+import { useI18n } from "@/src/context/LanguageContext";
 import {
   LETTER_INDEX,
   LETTERS,
@@ -29,6 +29,7 @@ export default function BrowseScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const listRef = useRef<FlatList<Proverb>>(null);
+  const { t } = useI18n();
 
   const [query, setQuery] = useState("");
   const [activeLetter, setActiveLetter] = useState<string>(LETTERS[0]?.letter ?? "A");
@@ -72,7 +73,7 @@ export default function BrowseScreen() {
         ]}
       >
         <Text style={[styles.title, { color: colors.onSurface, fontFamily: fonts.serifBold }]}>
-          {TR.browse.title}
+          {t.browse.title}
         </Text>
         <View style={[styles.searchBox, { backgroundColor: colors.surfaceSecondary, borderColor: colors.border }]}>
           <Feather name="search" size={18} color={colors.onSurfaceTertiary} />
@@ -80,7 +81,7 @@ export default function BrowseScreen() {
             testID="search-input"
             value={query}
             onChangeText={setQuery}
-            placeholder={TR.browse.searchPlaceholder}
+            placeholder={t.browse.searchPlaceholder}
             placeholderTextColor={colors.onSurfaceTertiary}
             style={[styles.searchInput, { color: colors.onSurface, fontFamily: fonts.sans }]}
             autoCorrect={false}
@@ -93,15 +94,15 @@ export default function BrowseScreen() {
           ) : null}
         </View>
         <Text style={[styles.count, { color: colors.onSurfaceSecondary, fontFamily: fonts.sansMed }]}>
-          {TR.browse.resultsCount(data.length)}
+          {t.browse.resultsCount(data.length)}
         </Text>
       </View>
 
       {data.length === 0 ? (
         <EmptyState
-          title={TR.browse.empty}
-          hint={TR.browse.emptyHint}
-          actionLabel={TR.browse.clearSearch}
+          title={t.browse.empty}
+          hint={t.browse.emptyHint}
+          actionLabel={t.browse.clearSearch}
           onAction={() => setQuery("")}
         />
       ) : (

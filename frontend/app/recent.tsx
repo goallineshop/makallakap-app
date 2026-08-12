@@ -9,7 +9,7 @@ import { ScreenHeader } from "@/src/components/ScreenHeader";
 import { useToast } from "@/src/components/Toast";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useUserData } from "@/src/context/UserDataContext";
-import { TR } from "@/src/i18n/tr";
+import { useI18n } from "@/src/context/LanguageContext";
 import { getById, Proverb } from "@/src/services/proverbs";
 
 export default function RecentScreen() {
@@ -17,6 +17,7 @@ export default function RecentScreen() {
   const router = useRouter();
   const toast = useToast();
   const { recent, clearRecent } = useUserData();
+  const { t } = useI18n();
 
   const data = useMemo(
     () => recent.map((id) => getById(id)).filter(Boolean) as Proverb[],
@@ -26,7 +27,7 @@ export default function RecentScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.surface }]}>
       <ScreenHeader
-        title={TR.recent.title}
+        title={t.recent.title}
         onBack={() => router.back()}
         right={
           data.length > 0 ? (
@@ -34,7 +35,7 @@ export default function RecentScreen() {
               testID="recent-clear-button"
               onPress={() => {
                 clearRecent();
-                toast.show(TR.recent.cleared, { icon: "trash-2", type: "info" });
+                toast.show(t.recent.cleared, { icon: "trash-2", type: "info" });
               }}
               hitSlop={10}
             >
@@ -45,9 +46,9 @@ export default function RecentScreen() {
       />
       {data.length === 0 ? (
         <EmptyState
-          title={TR.recent.empty}
-          hint={TR.recent.emptyHint}
-          actionLabel={TR.browse.title}
+          title={t.recent.empty}
+          hint={t.recent.emptyHint}
+          actionLabel={t.browse.title}
           onAction={() => router.push("/(tabs)/browse")}
         />
       ) : (

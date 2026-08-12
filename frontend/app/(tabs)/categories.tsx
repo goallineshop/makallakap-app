@@ -6,13 +6,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CategoryIcon } from "@/src/components/CategoryIcon";
 import { useTheme } from "@/src/context/ThemeContext";
 import { CATEGORIES } from "@/src/data/categories";
-import { TR } from "@/src/i18n/tr";
+import { useI18n } from "@/src/context/LanguageContext";
 import { categoryCount } from "@/src/services/proverbs";
 
 export default function CategoriesScreen() {
   const { colors, fonts, spacing } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { t, catLabel } = useI18n();
 
   const counts = useMemo(() => {
     const m: Record<string, number> = {};
@@ -29,10 +30,10 @@ export default function CategoriesScreen() {
         ]}
       >
         <Text style={[styles.title, { color: colors.onSurface, fontFamily: fonts.serifBold }]}>
-          {TR.categories.title}
+          {t.categories.title}
         </Text>
         <Text style={[styles.subtitle, { color: colors.onSurfaceSecondary, fontFamily: fonts.sans }]}>
-          {TR.categories.subtitle}
+          {t.categories.subtitle}
         </Text>
       </View>
 
@@ -56,7 +57,7 @@ export default function CategoriesScreen() {
                 <CategoryIcon icon={c.icon} lib={c.lib} size={22} color={c.color} />
               </View>
               <Text style={[styles.cardTitle, { color: colors.onBrandTertiary, fontFamily: fonts.serifSemi }]} numberOfLines={1}>
-                {c.label}
+                {catLabel(c.key)}
               </Text>
               <View style={[styles.badge, { backgroundColor: colors.surface }]}>
                 <Text style={[styles.badgeText, { color: colors.onSurfaceSecondary, fontFamily: fonts.sansSemi }]}>
@@ -67,7 +68,7 @@ export default function CategoriesScreen() {
           ))}
         </View>
         <Text style={[styles.note, { color: colors.onSurfaceTertiary, fontFamily: fonts.sans }]}>
-          {TR.categories.note}
+          {t.categories.note}
         </Text>
       </ScrollView>
     </View>

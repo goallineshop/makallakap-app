@@ -48,6 +48,12 @@ Build a complete, modern, fast, scalable Turkish-language mobile app based on th
 - **Günlük Hatırlatma (Local Notifications)**: expo-notifications local daily scheduling at the user's chosen time with today's proverb; permission-aware Settings toggle; re-applied on launch; graceful no-op + info toast on web/Expo Go (fires only in a real build). No push server/keys.
 - E2E tested (iteration_2.json): all 3 features PASS incl. timeout path + persistence; no bugs.
 
+## Iteration 3 (2026-06-12)
+- **Interface-only i18n**: 4 UI languages — Türkçe (default), English, Deutsch, Русский. Proper i18n layer: `src/i18n/{tr,en,de,ru}.ts` (typed `TrType` for compiler-enforced parity) + `src/i18n/index.ts` + `LanguageContext` (`useI18n()` → `t`, `language`, `setLanguage`, `catLabel`). Language selector added in Settings; selection persisted locally under `mk_lang`; default Türkçe.
+- Every screen/label localized (home, tabs, browse/search, categories incl. localized category names, detail incl. Meaning/Explanation/Related + action bar, favorites, recent, quiz + flashcards, achievements, settings incl. font-size labels, toasts/notifications title).
+- **Content untouched**: proverb text/meaning/explanation read straight from `proverbs.json` (3512 records, unchanged); i18n never touches proverb data; search still runs over original data.
+- E2E tested (iteration_3.json): all 4 languages + persistence + content integrity PASS; no bugs.
+
 ## Backlog (prioritized)
 - P1: Sesli Oku validation on real device (Kyrgyz phonetics limited by tr-TR voice); real local notifications (native build); home-screen widget (native build).
 - P2: Cloud sync for favorites (Supabase/Firebase); multilingual content (Kırgızca/İngilizce/Rusça translations); community (comments, ratings, shared lists); AI helpers (explain/example/similar/story); premium tier.

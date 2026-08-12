@@ -7,7 +7,7 @@ import { EmptyState } from "@/src/components/EmptyState";
 import { ProverbListItem } from "@/src/components/ProverbListItem";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useUserData } from "@/src/context/UserDataContext";
-import { TR } from "@/src/i18n/tr";
+import { useI18n } from "@/src/context/LanguageContext";
 import { getById, Proverb } from "@/src/services/proverbs";
 
 export default function FavoritesScreen() {
@@ -15,6 +15,7 @@ export default function FavoritesScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { favorites } = useUserData();
+  const { t } = useI18n();
 
   const data = useMemo(
     () => favorites.map((id) => getById(id)).filter(Boolean) as Proverb[],
@@ -30,20 +31,20 @@ export default function FavoritesScreen() {
         ]}
       >
         <Text style={[styles.title, { color: colors.onSurface, fontFamily: fonts.serifBold }]}>
-          {TR.favorites.title}
+          {t.favorites.title}
         </Text>
         {data.length > 0 ? (
           <Text style={[styles.count, { color: colors.onSurfaceSecondary, fontFamily: fonts.sansMed }]}>
-            {TR.favorites.count(data.length)}
+            {t.favorites.count(data.length)}
           </Text>
         ) : null}
       </View>
 
       {data.length === 0 ? (
         <EmptyState
-          title={TR.favorites.empty}
-          hint={TR.favorites.emptyHint}
-          actionLabel={TR.browse.title}
+          title={t.favorites.empty}
+          hint={t.favorites.emptyHint}
+          actionLabel={t.browse.title}
           onAction={() => router.push("/(tabs)/browse")}
         />
       ) : (

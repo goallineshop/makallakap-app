@@ -6,16 +6,17 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { ScreenHeader } from "@/src/components/ScreenHeader";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useUserData } from "@/src/context/UserDataContext";
-import { TR } from "@/src/i18n/tr";
+import { useI18n } from "@/src/context/LanguageContext";
 
 export default function AchievementsScreen() {
   const { colors, fonts, spacing } = useTheme();
   const router = useRouter();
   const { achievements, streak } = useUserData();
+  const { t } = useI18n();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.surface }]}>
-      <ScreenHeader title={TR.achievements.title} subtitle={TR.achievements.subtitle} onBack={() => router.back()} />
+      <ScreenHeader title={t.achievements.title} subtitle={t.achievements.subtitle} onBack={() => router.back()} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -26,7 +27,7 @@ export default function AchievementsScreen() {
           <View style={styles.streakHeader}>
             <Feather name="zap" size={20} color={colors.brandSecondary} />
             <Text style={[styles.streakTitle, { color: colors.onSurfaceInverse, fontFamily: fonts.serifBold }]}>
-              {TR.achievements.streakTitle}
+              {t.achievements.streakTitle}
             </Text>
           </View>
           <View style={styles.streakRow}>
@@ -35,7 +36,7 @@ export default function AchievementsScreen() {
                 {streak.current}
               </Text>
               <Text style={[styles.streakLabel, { color: colors.onSurfaceInverse, fontFamily: fonts.sans }]}>
-                {TR.achievements.current}
+                {t.achievements.current}
               </Text>
             </View>
             <View style={[styles.streakSep, { backgroundColor: colors.brandTertiary }]} />
@@ -44,7 +45,7 @@ export default function AchievementsScreen() {
                 {streak.longest}
               </Text>
               <Text style={[styles.streakLabel, { color: colors.onSurfaceInverse, fontFamily: fonts.sans }]}>
-                {TR.achievements.longest}
+                {t.achievements.longest}
               </Text>
             </View>
           </View>
@@ -99,7 +100,7 @@ export default function AchievementsScreen() {
                   />
                 </View>
                 <Text style={[styles.progressText, { color: colors.onSurfaceTertiary, fontFamily: fonts.sansMed }]}>
-                  {a.unlocked ? TR.achievements.unlocked : TR.achievements.progress(Math.min(a.value, a.def.target), a.def.target)}
+                  {a.unlocked ? t.achievements.unlocked : t.achievements.progress(Math.min(a.value, a.def.target), a.def.target)}
                 </Text>
               </View>
             );

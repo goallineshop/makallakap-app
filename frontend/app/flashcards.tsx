@@ -16,7 +16,7 @@ import { EmptyState } from "@/src/components/EmptyState";
 import { ScreenHeader } from "@/src/components/ScreenHeader";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useUserData } from "@/src/context/UserDataContext";
-import { TR } from "@/src/i18n/tr";
+import { useI18n } from "@/src/context/LanguageContext";
 import { getById, Proverb, PROVERBS } from "@/src/services/proverbs";
 
 const DECK_SIZE = 30;
@@ -42,6 +42,7 @@ function Flashcard({
   height: number;
 }) {
   const { colors, fonts, proverbFont, type } = useTheme();
+  const { t } = useI18n();
   const anim = useRef(new Animated.Value(0)).current;
   const [flipped, setFlipped] = useState(false);
 
@@ -70,7 +71,7 @@ function Flashcard({
         >
           <View style={[styles.faceBadge, { backgroundColor: colors.brandTertiary }]}>
             <Text style={[styles.faceBadgeText, { color: colors.onBrandTertiary, fontFamily: fonts.sansSemi }]}>
-              {TR.flashcards.front}
+              {t.flashcards.front}
             </Text>
           </View>
           <Text
@@ -81,7 +82,7 @@ function Flashcard({
           <View style={styles.flipHint}>
             <Feather name="refresh-cw" size={13} color={colors.onSurfaceTertiary} />
             <Text style={[styles.flipHintText, { color: colors.onSurfaceTertiary, fontFamily: fonts.sans }]}>
-              {TR.flashcards.tapToFlip}
+              {t.flashcards.tapToFlip}
             </Text>
           </View>
         </Animated.View>
@@ -100,7 +101,7 @@ function Flashcard({
         >
           <View style={[styles.faceBadge, { backgroundColor: "rgba(255,255,255,0.2)" }]}>
             <Text style={[styles.faceBadgeText, { color: colors.onBrandPrimary, fontFamily: fonts.sansSemi }]}>
-              {TR.flashcards.back}
+              {t.flashcards.back}
             </Text>
           </View>
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ justifyContent: "center", flexGrow: 1 }}>
@@ -124,6 +125,7 @@ export default function FlashcardsScreen() {
   const router = useRouter();
   const { width, height } = useWindowDimensions();
   const { favorites, isFavorite, toggleFavorite } = useUserData();
+  const { t } = useI18n();
   const scrollRef = useRef<ScrollView>(null);
 
   const [source, setSource] = useState<Source>("random");
@@ -166,8 +168,8 @@ export default function FlashcardsScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.surface }]}>
       <ScreenHeader
-        title={TR.flashcards.title}
-        subtitle={TR.flashcards.subtitle}
+        title={t.flashcards.title}
+        subtitle={t.flashcards.subtitle}
         onBack={() => router.back()}
         right={
           source === "random" && deck.length > 0 ? (
@@ -196,7 +198,7 @@ export default function FlashcardsScreen() {
                     { color: active ? colors.onBrandPrimary : colors.onSurfaceSecondary, fontFamily: active ? fonts.sansSemi : fonts.sansMed },
                   ]}
                 >
-                  {s === "random" ? TR.flashcards.random : TR.flashcards.favorites}
+                  {s === "random" ? t.flashcards.random : t.flashcards.favorites}
                 </Text>
               </Pressable>
             );
@@ -206,9 +208,9 @@ export default function FlashcardsScreen() {
 
       {deck.length === 0 ? (
         <EmptyState
-          title={TR.flashcards.emptyFav}
-          hint={TR.flashcards.emptyFavHint}
-          actionLabel={TR.browse.title}
+          title={t.flashcards.emptyFav}
+          hint={t.flashcards.emptyFavHint}
+          actionLabel={t.browse.title}
           onAction={() => router.push("/(tabs)/browse")}
         />
       ) : (
@@ -246,7 +248,7 @@ export default function FlashcardsScreen() {
 
             <View style={styles.center}>
               <Text style={[styles.progress, { color: colors.onSurface, fontFamily: fonts.sansBold }]}>
-                {TR.flashcards.progress(index + 1, deck.length)}
+                {t.flashcards.progress(index + 1, deck.length)}
               </Text>
               <Pressable
                 testID="flashcards-fav"
@@ -258,7 +260,7 @@ export default function FlashcardsScreen() {
               >
                 <Feather name="heart" size={16} color={fav ? colors.brandPrimary : colors.onSurfaceTertiary} />
                 <Text style={[styles.favText, { color: fav ? colors.brandPrimary : colors.onSurfaceSecondary, fontFamily: fonts.sansMed }]}>
-                  {fav ? TR.detail.removeFav : TR.detail.addFav}
+                  {fav ? t.detail.removeFav : t.detail.addFav}
                 </Text>
               </Pressable>
             </View>

@@ -7,36 +7,37 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useTheme } from "@/src/context/ThemeContext";
 import { useUserData } from "@/src/context/UserDataContext";
-import { TR } from "@/src/i18n/tr";
+import { useI18n } from "@/src/context/LanguageContext";
 import { Difficulty } from "@/src/services/quiz";
-
-const MODES = [
-  { key: "complete", icon: "edit-3", ...TR.quiz.modes.complete },
-  { key: "meaning", icon: "list", ...TR.quiz.modes.meaning },
-  { key: "word", icon: "type", ...TR.quiz.modes.word },
-] as const;
-
-const DIFFICULTIES: { key: Difficulty; label: string }[] = [
-  { key: "easy", label: TR.quiz.easy },
-  { key: "medium", label: TR.quiz.medium },
-  { key: "hard", label: TR.quiz.hard },
-];
 
 export default function QuizHubScreen() {
   const { colors, fonts, spacing } = useTheme();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { quizStats, streak, achievements } = useUserData();
+  const { t } = useI18n();
 
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
   const [timed, setTimed] = useState(false);
 
+  const MODES = [
+    { key: "complete", icon: "edit-3", ...t.quiz.modes.complete },
+    { key: "meaning", icon: "list", ...t.quiz.modes.meaning },
+    { key: "word", icon: "type", ...t.quiz.modes.word },
+  ] as const;
+
+  const DIFFICULTIES: { key: Difficulty; label: string }[] = [
+    { key: "easy", label: t.quiz.easy },
+    { key: "medium", label: t.quiz.medium },
+    { key: "hard", label: t.quiz.hard },
+  ];
+
   const unlocked = achievements.filter((a) => a.unlocked).length;
 
   const stats = [
-    { icon: "play-circle", label: TR.quiz.games, value: quizStats.games },
-    { icon: "check-circle", label: TR.quiz.totalCorrect, value: quizStats.totalCorrect },
-    { icon: "star", label: TR.quiz.best, value: quizStats.bestScore },
+    { icon: "play-circle", label: t.quiz.games, value: quizStats.games },
+    { icon: "check-circle", label: t.quiz.totalCorrect, value: quizStats.totalCorrect },
+    { icon: "star", label: t.quiz.best, value: quizStats.bestScore },
   ];
 
   const startMode = (mode: string) => {
@@ -52,10 +53,10 @@ export default function QuizHubScreen() {
         ]}
       >
         <Text style={[styles.title, { color: colors.onSurface, fontFamily: fonts.serifBold }]}>
-          {TR.quiz.title}
+          {t.quiz.title}
         </Text>
         <Text style={[styles.subtitle, { color: colors.onSurfaceSecondary, fontFamily: fonts.sans }]}>
-          {TR.quiz.subtitle}
+          {t.quiz.subtitle}
         </Text>
       </View>
 
@@ -81,7 +82,7 @@ export default function QuizHubScreen() {
         {/* Difficulty + timed */}
         <View style={[styles.optionCard, { backgroundColor: colors.surfaceSecondary, borderColor: colors.border }]}>
           <Text style={[styles.optionLabel, { color: colors.brandPrimary, fontFamily: fonts.sansBold }]}>
-            {TR.quiz.difficulty}
+            {t.quiz.difficulty}
           </Text>
           <View style={[styles.segment, { backgroundColor: colors.surfaceTertiary }]}>
             {DIFFICULTIES.map((d) => {
@@ -112,7 +113,7 @@ export default function QuizHubScreen() {
             <View style={styles.timedLeft}>
               <Feather name="clock" size={18} color={colors.onSurface} />
               <Text style={[styles.timedText, { color: colors.onSurface, fontFamily: fonts.sansMed }]}>
-                {TR.quiz.timed}
+                {t.quiz.timed}
               </Text>
             </View>
             <Switch
@@ -168,10 +169,10 @@ export default function QuizHubScreen() {
           </View>
           <View style={{ flex: 1 }}>
             <Text style={[styles.modeTitle, { color: colors.onBrandTertiary, fontFamily: fonts.serifSemi }]}>
-              {TR.quiz.flashcardsCard}
+              {t.quiz.flashcardsCard}
             </Text>
             <Text style={[styles.modeDesc, { color: colors.onBrandTertiary, fontFamily: fonts.sans }]}>
-              {TR.quiz.flashcardsDesc}
+              {t.quiz.flashcardsDesc}
             </Text>
           </View>
           <Feather name="chevron-right" size={22} color={colors.onBrandTertiary} />
@@ -189,10 +190,10 @@ export default function QuizHubScreen() {
           <Feather name="award" size={22} color={colors.brandSecondary} />
           <View style={{ flex: 1 }}>
             <Text style={[styles.achTitle, { color: colors.onSurfaceInverse, fontFamily: fonts.serifBold }]}>
-              {TR.achievements.title}
+              {t.achievements.title}
             </Text>
             <Text style={[styles.achSub, { color: colors.brandSecondary, fontFamily: fonts.sans }]}>
-              {unlocked} / {achievements.length} • {TR.achievements.current}: {streak.current} {TR.achievements.day}
+              {unlocked} / {achievements.length} • {t.achievements.current}: {streak.current} {t.achievements.day}
             </Text>
           </View>
           <Feather name="chevron-right" size={20} color={colors.onSurfaceInverse} />

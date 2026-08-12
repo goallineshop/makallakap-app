@@ -19,7 +19,7 @@ import { CategoryIcon } from "@/src/components/CategoryIcon";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useUserData } from "@/src/context/UserDataContext";
 import { CATEGORIES } from "@/src/data/categories";
-import { TR } from "@/src/i18n/tr";
+import { useI18n } from "@/src/context/LanguageContext";
 import {
   featuredProverbs,
   getById,
@@ -34,6 +34,7 @@ const HERO_IMG =
 export default function HomeScreen() {
   const { colors, fonts, spacing, proverbFont, type } = useTheme();
   const { recent, favorites, streak } = useUserData();
+  const { t, catLabel } = useI18n();
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
@@ -52,10 +53,10 @@ export default function HomeScreen() {
   };
 
   const quickActions = [
-    { key: "random", icon: "shuffle", label: TR.home.random, onPress: goRandom },
-    { key: "quiz", icon: "help-circle", label: TR.tabs.quiz, onPress: () => router.push("/(tabs)/quiz") },
-    { key: "fav", icon: "heart", label: TR.tabs.favorites, onPress: () => router.push("/(tabs)/favorites") },
-    { key: "badge", icon: "award", label: TR.home.achievements, onPress: () => router.push("/achievements") },
+    { key: "random", icon: "shuffle", label: t.home.random, onPress: goRandom },
+    { key: "quiz", icon: "help-circle", label: t.tabs.quiz, onPress: () => router.push("/(tabs)/quiz") },
+    { key: "fav", icon: "heart", label: t.tabs.favorites, onPress: () => router.push("/(tabs)/favorites") },
+    { key: "badge", icon: "award", label: t.home.achievements, onPress: () => router.push("/achievements") },
   ];
 
   return (
@@ -73,10 +74,10 @@ export default function HomeScreen() {
       >
         <View>
           <Text style={[styles.logo, { color: colors.brandPrimary, fontFamily: fonts.serifBold }]}>
-            {TR.appName}
+            {t.appName}
           </Text>
           <Text style={[styles.tagline, { color: colors.onSurfaceSecondary, fontFamily: fonts.sans }]}>
-            {TR.tagline}
+            {t.tagline}
           </Text>
         </View>
         <Pressable
@@ -105,7 +106,7 @@ export default function HomeScreen() {
               {streak.current}
             </Text>
             <Text style={[styles.statLabel, { color: colors.onSurfaceSecondary, fontFamily: fonts.sans }]}>
-              {TR.home.streak.toLowerCase()}
+              {t.home.streak.toLowerCase()}
             </Text>
           </View>
           <View style={[styles.statPill, { backgroundColor: colors.surfaceSecondary }]}>
@@ -114,7 +115,7 @@ export default function HomeScreen() {
               {PROVERB_COUNT}
             </Text>
             <Text style={[styles.statLabel, { color: colors.onSurfaceSecondary, fontFamily: fonts.sans }]}>
-              {TR.home.totalProverbs}
+              {t.home.totalProverbs}
             </Text>
           </View>
         </View>
@@ -139,7 +140,7 @@ export default function HomeScreen() {
           <View style={styles.heroContent}>
             <View style={styles.heroBadge}>
               <Feather name="sun" size={13} color="#F5D6D8" />
-              <Text style={[styles.heroBadgeText, { fontFamily: fonts.sansSemi }]}>{TR.home.proverbOfDay}</Text>
+              <Text style={[styles.heroBadgeText, { fontFamily: fonts.sansSemi }]}>{t.home.proverbOfDay}</Text>
             </View>
             <Text style={[styles.heroProverb, { fontFamily: proverbFont, fontSize: type(26) }]} numberOfLines={4}>
               {daily.proverb}
@@ -185,10 +186,10 @@ export default function HomeScreen() {
         >
           <View style={{ flex: 1 }}>
             <Text style={[styles.quizTitle, { color: colors.onSurfaceInverse, fontFamily: fonts.serifBold }]}>
-              {TR.home.startQuiz}
+              {t.home.startQuiz}
             </Text>
             <Text style={[styles.quizSub, { color: colors.brandSecondary, fontFamily: fonts.sans }]}>
-              {TR.home.quizBanner}
+              {t.home.quizBanner}
             </Text>
           </View>
           <View style={[styles.quizIcon, { backgroundColor: colors.brandPrimary }]}>
@@ -198,7 +199,7 @@ export default function HomeScreen() {
 
         {/* Öne Çıkan */}
         <View style={styles.section}>
-          <SectionHeader title={TR.home.featured} icon="star" />
+          <SectionHeader title={t.home.featured} icon="star" />
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -213,9 +214,9 @@ export default function HomeScreen() {
         {/* Kategoriler */}
         <View style={styles.section}>
           <SectionHeader
-            title={TR.home.categories}
+            title={t.home.categories}
             icon="grid"
-            actionLabel={TR.home.seeAll}
+            actionLabel={t.home.seeAll}
             onAction={() => router.push("/(tabs)/categories")}
           />
           <ScrollView
@@ -235,7 +236,7 @@ export default function HomeScreen() {
               >
                 <CategoryIcon icon={c.icon} lib={c.lib} size={18} color={c.color} />
                 <Text style={[styles.catChipText, { color: colors.onSurface, fontFamily: fonts.sansMed }]}>
-                  {c.label}
+                  {catLabel(c.key)}
                 </Text>
               </Pressable>
             ))}
@@ -246,9 +247,9 @@ export default function HomeScreen() {
         {recentProverbs.length > 0 && (
           <View style={styles.section}>
             <SectionHeader
-              title={TR.home.recent}
+              title={t.home.recent}
               icon="clock"
-              actionLabel={TR.home.seeAll}
+              actionLabel={t.home.seeAll}
               onAction={() => router.push("/recent")}
             />
             <ScrollView
@@ -278,10 +279,10 @@ export default function HomeScreen() {
             <Feather name="heart" size={22} color={colors.onBrandTertiary} />
             <View style={{ flex: 1 }}>
               <Text style={[styles.favTitle, { color: colors.onBrandTertiary, fontFamily: fonts.serifBold }]}>
-                {TR.home.favorites}
+                {t.home.favorites}
               </Text>
               <Text style={[styles.favSub, { color: colors.onBrandTertiary, fontFamily: fonts.sans }]}>
-                {TR.favorites.count(favorites.length)}
+                {t.favorites.count(favorites.length)}
               </Text>
             </View>
             <Feather name="chevron-right" size={20} color={colors.onBrandTertiary} />

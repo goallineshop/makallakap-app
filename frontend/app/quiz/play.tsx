@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { PrimaryButton } from "@/src/components/Buttons";
 import { useTheme } from "@/src/context/ThemeContext";
 import { useUserData } from "@/src/context/UserDataContext";
-import { TR } from "@/src/i18n/tr";
+import { useI18n } from "@/src/context/LanguageContext";
 import {
   Difficulty,
   DIFFICULTY_MULTIPLIER,
@@ -30,6 +30,7 @@ export default function QuizPlayScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { recordQuizResult } = useUserData();
+  const { t } = useI18n();
 
   const [questions, setQuestions] = useState<QuizQuestion[]>(() => generateQuiz(quizMode, difficulty));
   const [index, setIndex] = useState(0);
@@ -124,25 +125,25 @@ export default function QuizPlayScreen() {
               %{score}
             </Text>
             <Text style={[styles.scoreCaption, { color: colors.onBrandTertiary, fontFamily: fonts.sansMed }]}>
-              {TR.quiz.percent}
+              {t.quiz.percent}
             </Text>
           </View>
           <Text style={[styles.resultTitle, { color: colors.onSurface, fontFamily: fonts.serifBold }]}>
-            {TR.quiz.resultTitle}
+            {t.quiz.resultTitle}
           </Text>
           <View style={styles.resultStats}>
             <View style={[styles.resultStat, { backgroundColor: colors.surfaceSecondary }]}>
               <Feather name="check-circle" size={22} color={colors.success} />
               <Text style={[styles.resultValue, { color: colors.onSurface, fontFamily: fonts.sansBold }]}>{correct}</Text>
               <Text style={[styles.resultLabel, { color: colors.onSurfaceSecondary, fontFamily: fonts.sans }]}>
-                {TR.quiz.correctCount}
+                {t.quiz.correctCount}
               </Text>
             </View>
             <View style={[styles.resultStat, { backgroundColor: colors.surfaceSecondary }]}>
               <Feather name="x-circle" size={22} color={colors.error} />
               <Text style={[styles.resultValue, { color: colors.onSurface, fontFamily: fonts.sansBold }]}>{wrong}</Text>
               <Text style={[styles.resultLabel, { color: colors.onSurfaceSecondary, fontFamily: fonts.sans }]}>
-                {TR.quiz.wrongCount}
+                {t.quiz.wrongCount}
               </Text>
             </View>
             <View style={[styles.resultStat, { backgroundColor: colors.surfaceSecondary }]}>
@@ -151,16 +152,16 @@ export default function QuizPlayScreen() {
                 {Math.round(points)}
               </Text>
               <Text style={[styles.resultLabel, { color: colors.onSurfaceSecondary, fontFamily: fonts.sans }]}>
-                {TR.quiz.points}
+                {t.quiz.points}
               </Text>
             </View>
           </View>
           <View style={styles.resultActions}>
-            <PrimaryButton testID="quiz-restart" label={TR.quiz.playAgain} icon="refresh-cw" onPress={restart} fullWidth />
+            <PrimaryButton testID="quiz-restart" label={t.quiz.playAgain} icon="refresh-cw" onPress={restart} fullWidth />
             <View style={{ height: 12 }} />
             <PrimaryButton
               testID="quiz-home"
-              label={TR.quiz.backHome}
+              label={t.quiz.backHome}
               variant="secondary"
               onPress={() => router.replace("/(tabs)/quiz")}
               fullWidth
@@ -188,7 +189,7 @@ export default function QuizPlayScreen() {
           <Feather name="x" size={22} color={colors.onSurface} />
         </Pressable>
         <Text style={[styles.progressLabel, { color: colors.onSurfaceSecondary, fontFamily: fonts.sansSemi }]}>
-          {TR.quiz.question(index + 1, total)}
+          {t.quiz.question(index + 1, total)}
         </Text>
         {timed ? (
           <View testID="quiz-timer" style={[styles.timerPill, { backgroundColor: colors.surfaceSecondary }]}>
@@ -217,7 +218,7 @@ export default function QuizPlayScreen() {
         contentContainerStyle={{ padding: spacing.lg, paddingBottom: 140 }}
       >
         <Text style={[styles.modeTag, { color: colors.brandPrimary, fontFamily: fonts.sansBold }]}>
-          {TR.quiz.modes[quizMode].title} • {difficulty === "easy" ? TR.quiz.easy : difficulty === "hard" ? TR.quiz.hard : TR.quiz.medium}
+          {t.quiz.modes[quizMode].title} • {difficulty === "easy" ? t.quiz.easy : difficulty === "hard" ? t.quiz.hard : t.quiz.medium}
         </Text>
         <View style={[styles.questionCard, { backgroundColor: colors.surfaceSecondary, borderColor: colors.border }]}>
           <Text style={[styles.question, { color: colors.onSurface, fontFamily: proverbFont, fontSize: type(24) }]}>
@@ -287,12 +288,12 @@ export default function QuizPlayScreen() {
             ]}
           >
             {selected === q.answerIndex
-              ? TR.quiz.correct
-              : `${selected === -1 ? TR.quiz.timeUp : TR.quiz.wrong} • ${TR.quiz.correctAnswer}: ${q.options[q.answerIndex]}`}
+              ? t.quiz.correct
+              : `${selected === -1 ? t.quiz.timeUp : t.quiz.wrong} • ${t.quiz.correctAnswer}: ${q.options[q.answerIndex]}`}
           </Text>
           <PrimaryButton
             testID="quiz-next"
-            label={index + 1 >= total ? TR.quiz.finish : TR.quiz.next}
+            label={index + 1 >= total ? t.quiz.finish : t.quiz.next}
             icon="arrow-right"
             onPress={next}
             fullWidth

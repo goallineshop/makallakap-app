@@ -56,6 +56,7 @@ export const TR = {
     usage: 'Hangi Durumlarda Kullanılır?',
     similar: 'Benzer Atasözleri',
     opposite: 'Zıt Anlamlı Atasözleri',
+    related: 'İlgili Atasözleri',
     addFav: 'Favoriye Ekle',
     removeFav: 'Favoriden Çıkar',
     share: 'Paylaş',
@@ -174,7 +175,8 @@ export const TR = {
     language: 'Dil Ayarları',
     languageValue: 'Türkçe',
     languageNote:
-      'Uygulama arayüzü Türkçedir. Çoklu dil desteği ileride eklenecektir.',
+      'Yalnızca arayüz dili değişir. Atasözü içerikleri özgün dilinde kalır.',
+    sizes: { kucuk: 'Küçük', orta: 'Orta', buyuk: 'Büyük', cok_buyuk: 'Çok Büyük' },
     about: 'Hakkında',
     aboutText:
       'Makallakap — Kırgız atasözleri ve Türkçe anlamları. Atasözü içerikleri özgün kaynaktan alınmıştır.',
@@ -196,6 +198,31 @@ export const TR = {
     shareTitle: 'Atasözü Paylaş',
     ttsUnavailable: 'Sesli okuma bu cihazda kullanılamıyor',
   },
+
+  cat: {
+    Aile: 'Aile',
+    Ask: 'Aşk',
+    Arkadaslik: 'Arkadaşlık',
+    Dostluk: 'Dostluk',
+    Dusmanlik: 'Düşmanlık',
+    Calisma: 'Çalışma',
+    Sabir: 'Sabır',
+    Basari: 'Başarı',
+    Para: 'Para',
+    Zenginlik: 'Zenginlik',
+    Fakirlik: 'Fakirlik',
+    Egitim: 'Eğitim',
+    Akil: 'Akıl',
+    Zaman: 'Zaman',
+    Hayat: 'Hayat',
+    Doga: 'Doğa',
+    Hayvanlar: 'Hayvanlar',
+    Saglik: 'Sağlık',
+    Adalet: 'Adalet',
+    Cesaret: 'Cesaret',
+    Tecrube: 'Tecrübe',
+    'Insan Iliskileri': 'İnsan İlişkileri',
+  } as Record<string, string>,
 };
 
 export type TrType = typeof TR;

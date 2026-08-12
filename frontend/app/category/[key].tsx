@@ -7,13 +7,14 @@ import { ProverbListItem } from "@/src/components/ProverbListItem";
 import { ScreenHeader } from "@/src/components/ScreenHeader";
 import { useTheme } from "@/src/context/ThemeContext";
 import { CATEGORY_MAP } from "@/src/data/categories";
-import { TR } from "@/src/i18n/tr";
+import { useI18n } from "@/src/context/LanguageContext";
 import { byCategory, Proverb } from "@/src/services/proverbs";
 
 export default function CategoryScreen() {
   const { key } = useLocalSearchParams<{ key: string }>();
   const { colors, spacing } = useTheme();
   const router = useRouter();
+  const { t, catLabel } = useI18n();
 
   const decodedKey = key ? decodeURIComponent(key) : "";
   const meta = CATEGORY_MAP[decodedKey];
@@ -22,12 +23,12 @@ export default function CategoryScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.surface }]}>
       <ScreenHeader
-        title={meta?.label ?? TR.categories.title}
-        subtitle={TR.categories.count(data.length)}
+        title={meta ? catLabel(decodedKey) : t.categories.title}
+        subtitle={t.categories.count(data.length)}
         onBack={() => router.back()}
       />
       {data.length === 0 ? (
-        <EmptyState title={TR.categories.empty} actionLabel={TR.common.back} onAction={() => router.back()} />
+        <EmptyState title={t.categories.empty} actionLabel={t.common.back} onAction={() => router.back()} />
       ) : (
         <FlatList
           testID="category-list"

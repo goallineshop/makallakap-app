@@ -9,7 +9,8 @@ import { useToast } from "@/src/components/Toast";
 import { ThemeMode, useTheme, FontChoice } from "@/src/context/ThemeContext";
 import { useUserData } from "@/src/context/UserDataContext";
 import { ACCENTS, AccentKey, FONT_SCALE_LABELS } from "@/src/theme/tokens";
-import { TR } from "@/src/i18n/tr";
+import { useI18n } from "@/src/context/LanguageContext";
+import { LANGUAGES, Lang } from "@/src/i18n";
 import { PROVERB_COUNT } from "@/src/services/proverbs";
 import { formatTime, requestNotificationPermission } from "@/src/services/notifications";
 
@@ -82,23 +83,24 @@ export default function SettingsScreen() {
     proverbFont,
   } = useTheme();
   const { notif, setNotif } = useUserData();
+  const { t, language, setLanguage } = useI18n();
   const toast = useToast();
 
   const onToggleNotif = async (v: boolean) => {
     if (!v) {
       setNotif({ enabled: false });
-      toast.show(TR.settings.notifDisabled, { icon: "bell-off", type: "info" });
+      toast.show(t.settings.notifDisabled, { icon: "bell-off", type: "info" });
       return;
     }
     const res = await requestNotificationPermission();
     if (res === "granted") {
       setNotif({ enabled: true });
-      toast.show(TR.settings.notifEnabled, { icon: "bell", type: "success" });
+      toast.show(t.settings.notifEnabled, { icon: "bell", type: "success" });
     } else if (res === "unavailable") {
       setNotif({ enabled: true });
-      toast.show(TR.settings.notifNeedsBuild, { icon: "info", type: "info" });
+      toast.show(t.settings.notifNeedsBuild, { icon: "info", type: "info" });
     } else {
-      toast.show(TR.settings.notifPermDenied, { icon: "bell-off", type: "error" });
+      toast.show(t.settings.notifPermDenied, { icon: "bell-off", type: "error" });
     }
   };
 
@@ -117,19 +119,19 @@ export default function SettingsScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.surface }]}>
-      <ScreenHeader title={TR.settings.title} onBack={() => router.back()} />
+      <ScreenHeader title={t.settings.title} onBack={() => router.back()} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing["3xl"] }}
       >
         {/* Theme */}
-        <SettingsGroup title={TR.settings.theme}>
+        <SettingsGroup title={t.settings.theme}>
           <Segmented<ThemeMode>
             options={[
-              { key: "light", label: TR.settings.themeLight },
-              { key: "dark", label: TR.settings.themeDark },
-              { key: "system", label: TR.settings.themeSystem },
+              { key: "light", label: t.settings.themeLight },
+              { key: "dark", label: t.settings.themeDark },
+              { key: "system", label: t.settings.themeSystem },
             ]}
             value={mode}
             onChange={setMode}
@@ -137,7 +139,7 @@ export default function SettingsScreen() {
         </SettingsGroup>
 
         {/* Theme color */}
-        <SettingsGroup title={TR.settings.themeColor}>
+        <SettingsGroup title={t.settings.themeColor}>
           <View style={styles.swatchRow}>
             {(Object.keys(ACCENTS) as AccentKey[]).map((k) => {
               const a = ACCENTS[k];
@@ -170,27 +172,30 @@ export default function SettingsScreen() {
         </SettingsGroup>
 
         {/* Font size */}
-        <SettingsGroup title={TR.settings.fontSize}>
+        <SettingsGroup title={t.settings.fontSize}>
           <Segmented
-            options={FONT_SCALE_LABELS}
+            options={FONT_SCALE_LABELS.map((o) => ({
+              key: o.key,
+              label: (t.settings.sizes as Record<string, string>)[o.key] ?? o.label,
+            }))}
             value={fontScaleKey}
             onChange={setFontScaleKey}
           />
         </SettingsGroup>
 
         {/* Font family */}
-        <SettingsGroup title={TR.settings.fontFamily}>
+        <SettingsGroup title={t.settings.fontFamily}>
           <Segmented<FontChoice>
             options={[
-              { key: "serif", label: TR.settings.fontSerif },
-              { key: "sans", label: TR.settings.fontSans },
+              { key: "serif", label: t.settings.fontSerif },
+              { key: "sans", label: t.settings.fontSans },
             ]}
             value={fontChoice}
             onChange={setFontChoice}
           />
           <View style={[styles.preview, { borderTopColor: colors.border }]}>
             <Text style={[styles.previewLabel, { color: colors.onSurfaceTertiary, fontFamily: fonts.sans }]}>
-              {TR.settings.preview}
+              {t.settings.preview}
             </Text>
             <Text style={[styles.previewText, { color: colors.onSurface, fontFamily: proverbFont }]}>
               Damlaya damlaya göl olur.
@@ -199,12 +204,12 @@ export default function SettingsScreen() {
         </SettingsGroup>
 
         {/* Notifications */}
-        <SettingsGroup title={TR.settings.notifications}>
+        <SettingsGroup title={t.settings.notifications}>
           <View style={styles.row}>
             <View style={styles.rowLeft}>
               <Feather name="bell" size={18} color={colors.onSurface} />
               <Text style={[styles.rowLabel, { color: colors.onSurface, fontFamily: fonts.sansMed }]}>
-                {TR.settings.notifDaily}
+                {t.settings.notifDaily}
               </Text>
             </View>
             <Switch
@@ -220,7 +225,7 @@ export default function SettingsScreen() {
               <View style={styles.rowLeft}>
                 <Feather name="clock" size={18} color={colors.onSurface} />
                 <Text style={[styles.rowLabel, { color: colors.onSurface, fontFamily: fonts.sansMed }]}>
-                  {TR.settings.notifTime}
+                  {t.settings.notifTime}
                 </Text>
               </View>
               <View style={styles.timeControls}>
@@ -236,39 +241,53 @@ export default function SettingsScreen() {
             </View>
           )}
           <Text style={[styles.note, { color: colors.onSurfaceTertiary, fontFamily: fonts.sans }]}>
-            {TR.settings.notifNote}
+            {t.settings.notifNote}
           </Text>
         </SettingsGroup>
 
         {/* Language */}
-        <SettingsGroup title={TR.settings.language}>
-          <View style={styles.row}>
-            <View style={styles.rowLeft}>
-              <Feather name="globe" size={18} color={colors.onSurface} />
-              <Text style={[styles.rowLabel, { color: colors.onSurface, fontFamily: fonts.sansMed }]}>
-                {TR.settings.language}
-              </Text>
-            </View>
-            <View style={[styles.pill, { backgroundColor: colors.brandTertiary }]}>
-              <Text style={[styles.pillText, { color: colors.onBrandTertiary, fontFamily: fonts.sansSemi }]}>
-                {TR.settings.languageValue}
-              </Text>
-            </View>
-          </View>
+        <SettingsGroup title={t.settings.language}>
+          {LANGUAGES.map((l, i) => {
+            const active = l.key === language;
+            return (
+              <Pressable
+                key={l.key}
+                testID={`lang-${l.key}`}
+                onPress={() => {
+                  Haptics.selectionAsync();
+                  setLanguage(l.key as Lang);
+                }}
+                style={[
+                  styles.langRow,
+                  i > 0 && { borderTopColor: colors.border, borderTopWidth: StyleSheet.hairlineWidth },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.rowLabel,
+                    { color: active ? colors.brandPrimary : colors.onSurface, fontFamily: active ? fonts.sansSemi : fonts.sansMed },
+                  ]}
+                >
+                  {l.label}
+                </Text>
+                {active ? <Feather name="check" size={18} color={colors.brandPrimary} /> : null}
+              </Pressable>
+            );
+          })}
           <Text style={[styles.note, { color: colors.onSurfaceTertiary, fontFamily: fonts.sans }]}>
-            {TR.settings.languageNote}
+            {t.settings.languageNote}
           </Text>
         </SettingsGroup>
 
         {/* About */}
-        <SettingsGroup title={TR.settings.about}>
+        <SettingsGroup title={t.settings.about}>
           <Text style={[styles.aboutText, { color: colors.onSurfaceSecondary, fontFamily: fonts.sans }]}>
-            {TR.settings.aboutText}
+            {t.settings.aboutText}
           </Text>
           <View style={[styles.dataRow, { borderTopColor: colors.border }]}>
             <Feather name="database" size={16} color={colors.brandPrimary} />
             <Text style={[styles.dataText, { color: colors.onSurface, fontFamily: fonts.sansMed }]}>
-              {TR.settings.proverbCount(PROVERB_COUNT)}
+              {t.settings.proverbCount(PROVERB_COUNT)}
             </Text>
           </View>
         </SettingsGroup>
@@ -311,6 +330,12 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 12 },
   rowLeft: { flexDirection: "row", alignItems: "center", gap: 10, flex: 1 },
   rowLabel: { fontSize: 14, flexShrink: 1 },
+  langRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 13,
+  },
   timeControls: { flexDirection: "row", alignItems: "center", gap: 6 },
   timeText: { fontSize: 15, minWidth: 52, textAlign: "center" },
   stepper: { width: 32, height: 32, borderRadius: 10, alignItems: "center", justifyContent: "center" },

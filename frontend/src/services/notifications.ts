@@ -10,6 +10,7 @@ import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 
+import { storage } from '@/src/utils/storage';
 import { proverbOfDay } from '@/src/services/proverbs';
 
 export type NotifSettings = {
@@ -21,6 +22,18 @@ export type NotifSettings = {
 export type PermResult = 'granted' | 'denied' | 'unavailable';
 
 export const DEFAULT_NOTIF: NotifSettings = { enabled: false, hour: 9, minute: 0 };
+
+// Localized notification title (proverb body itself is never translated).
+const NOTIF_TITLES: Record<string, string> = {
+  tr: 'Günün Atasözü',
+  en: 'Proverb of the Day',
+  de: 'Sprichwort des Tages',
+  ru: 'Пословица дня',
+};
+async function getNotifTitle(): Promise<string> {
+  const lang = await storage.getItem<string>('mk_lang', 'tr');
+  return NOTIF_TITLES[lang || 'tr'] || NOTIF_TITLES.tr;
+}
 
 const isExpoGo = Constants.appOwnership === 'expo';
 
@@ -89,9 +102,10 @@ export async function scheduleDaily(hour: number, minute: number): Promise<void>
     await ensureAndroidChannel();
     await Notifications.cancelAllScheduledNotificationsAsync();
     const p = proverbOfDay();
+    const title = await getNotifTitle();
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: 'Günün Atasözü',
+        title,
         body: p.proverb,
         data: { proverbId: p.id },
       },
